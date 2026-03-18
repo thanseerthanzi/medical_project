@@ -1,41 +1,47 @@
-/**
-* Template Name: Medilab
-* Template URL: https://bootstrapmade.com/medilab-free-medical-bootstrap-theme/
-* Updated: Aug 07 2024 with Bootstrap v5.3.3
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
-/**
- * About Video Auto Play on Scroll
- */
-function initAboutVideo() {
-  const video = document.getElementById("aboutVideo");
-  const aboutSection = document.getElementById("about");
+(function () {
 
-  if (!video || !aboutSection) return;
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        video.src = video.src.replace("mute=1", "autoplay=1&mute=1");
-      } else {
-        video.src = video.src.replace("autoplay=1&mute=1", "mute=1");
-      }
-    });
-  }, { threshold: 0.5 });
-
-  observer.observe(aboutSection);
-}
-
-window.addEventListener('load', initAboutVideo);
   /**
-   * Apply .scrolled class to the body as the page is scrolled down
+   * About Video Auto Play on Scroll
+   */
+  function initAboutVideo() {
+    const video = document.getElementById("aboutVideo");
+    const aboutSection = document.getElementById("about");
+
+    if (!video || !aboutSection) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          video.src = video.src.replace("mute=1", "autoplay=1&mute=1");
+        } else {
+          video.src = video.src.replace("autoplay=1&mute=1", "mute=1");
+        }
+      });
+    }, { threshold: 0.5 });
+
+    observer.observe(aboutSection);
+  }
+
+  window.addEventListener('load', initAboutVideo);
+
+  /**
+   * Apply .scrolled class to body
    */
   function toggleScrolled() {
     const selectBody = document.querySelector('body');
     const selectHeader = document.querySelector('#header');
-    if (!selectHeader.classList.contains('scroll-up-sticky') && !selectHeader.classList.contains('sticky-top') && !selectHeader.classList.contains('fixed-top')) return;
-    window.scrollY > 100 ? selectBody.classList.add('scrolled') : selectBody.classList.remove('scrolled');
+
+    if (!selectHeader) return;
+
+    if (
+      !selectHeader.classList.contains('scroll-up-sticky') &&
+      !selectHeader.classList.contains('sticky-top') &&
+      !selectHeader.classList.contains('fixed-top')
+    ) return;
+
+    window.scrollY > 100
+      ? selectBody.classList.add('scrolled')
+      : selectBody.classList.remove('scrolled');
   }
 
   document.addEventListener('scroll', toggleScrolled);
@@ -48,13 +54,18 @@ window.addEventListener('load', initAboutVideo);
 
   function mobileNavToogle() {
     document.querySelector('body').classList.toggle('mobile-nav-active');
-    mobileNavToggleBtn.classList.toggle('bi-list');
-    mobileNavToggleBtn.classList.toggle('bi-x');
+    if (mobileNavToggleBtn) {
+      mobileNavToggleBtn.classList.toggle('bi-list');
+      mobileNavToggleBtn.classList.toggle('bi-x');
+    }
   }
-  mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
+
+  if (mobileNavToggleBtn) {
+    mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
+  }
 
   /**
-   * Hide mobile nav on same-page/hash links
+   * Hide mobile nav on link click
    */
   document.querySelectorAll('#navmenu a').forEach(navmenu => {
     navmenu.addEventListener('click', () => {
@@ -62,14 +73,13 @@ window.addEventListener('load', initAboutVideo);
         mobileNavToogle();
       }
     });
-
   });
 
   /**
-   * Toggle mobile nav dropdowns
+   * Dropdown toggle
    */
   document.querySelectorAll('.navmenu .toggle-dropdown').forEach(navmenu => {
-    navmenu.addEventListener('click', function(e) {
+    navmenu.addEventListener('click', function (e) {
       e.preventDefault();
       this.parentNode.classList.toggle('active');
       this.parentNode.nextElementSibling.classList.toggle('dropdown-active');
@@ -94,47 +104,59 @@ window.addEventListener('load', initAboutVideo);
 
   function toggleScrollTop() {
     if (scrollTop) {
-      window.scrollY > 100 ? scrollTop.classList.add('active') : scrollTop.classList.remove('active');
+      window.scrollY > 100
+        ? scrollTop.classList.add('active')
+        : scrollTop.classList.remove('active');
     }
   }
-  scrollTop.addEventListener('click', (e) => {
-    e.preventDefault();
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
+
+  if (scrollTop) {
+    scrollTop.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     });
-  });
+  }
 
   window.addEventListener('load', toggleScrollTop);
   document.addEventListener('scroll', toggleScrollTop);
 
   /**
-   * Animation on scroll function and init
+   * AOS animation
    */
   function aosInit() {
-    AOS.init({
-      duration: 600,
-      easing: 'ease-in-out',
-      once: true,
-      mirror: false
-    });
+    if (typeof AOS !== "undefined") {
+      AOS.init({
+        duration: 600,
+        easing: 'ease-in-out',
+        once: true,
+        mirror: false
+      });
+    }
   }
+
   window.addEventListener('load', aosInit);
 
   /**
-   * Initiate glightbox
+   * GLightbox
    */
-  const glightbox = GLightbox({
-    selector: '.glightbox'
-  });
+  if (typeof GLightbox !== "undefined") {
+    GLightbox({
+      selector: '.glightbox'
+    });
+  }
 
   /**
-   * Initiate Pure Counter
+   * PureCounter
    */
-  new PureCounter();
+  if (typeof PureCounter !== "undefined") {
+    new PureCounter();
+  }
 
   /**
-   * Frequently Asked Questions Toggle
+   * FAQ toggle
    */
   document.querySelectorAll('.faq-item h3, .faq-item .faq-toggle').forEach((faqItem) => {
     faqItem.addEventListener('click', () => {
@@ -143,32 +165,30 @@ window.addEventListener('load', initAboutVideo);
   });
 
   /**
-   * Init swiper sliders
+   * Swiper
    */
   function initSwiper() {
-    document.querySelectorAll(".init-swiper").forEach(function(swiperElement) {
+    if (typeof Swiper === "undefined") return;
+
+    document.querySelectorAll(".init-swiper").forEach(function (swiperElement) {
       let config = JSON.parse(
         swiperElement.querySelector(".swiper-config").innerHTML.trim()
       );
 
-      if (swiperElement.classList.contains("swiper-tab")) {
-        initSwiperWithCustomPagination(swiperElement, config);
-      } else {
-        new Swiper(swiperElement, config);
-      }
+      new Swiper(swiperElement, config);
     });
   }
 
   window.addEventListener("load", initSwiper);
 
   /**
-   * Correct scrolling position upon page load for URLs containing hash links.
+   * Scroll fix for hash links
    */
-  window.addEventListener('load', function(e) {
+  window.addEventListener('load', function () {
     if (window.location.hash) {
-      if (document.querySelector(window.location.hash)) {
+      let section = document.querySelector(window.location.hash);
+      if (section) {
         setTimeout(() => {
-          let section = document.querySelector(window.location.hash);
           let scrollMarginTop = getComputedStyle(section).scrollMarginTop;
           window.scrollTo({
             top: section.offsetTop - parseInt(scrollMarginTop),
@@ -180,24 +200,33 @@ window.addEventListener('load', initAboutVideo);
   });
 
   /**
-   * Navmenu Scrollspy
+   * Scrollspy
    */
   let navmenulinks = document.querySelectorAll('.navmenu a');
 
   function navmenuScrollspy() {
     navmenulinks.forEach(navmenulink => {
       if (!navmenulink.hash) return;
+
       let section = document.querySelector(navmenulink.hash);
       if (!section) return;
+
       let position = window.scrollY + 200;
-      if (position >= section.offsetTop && position <= (section.offsetTop + section.offsetHeight)) {
-        document.querySelectorAll('.navmenu a.active').forEach(link => link.classList.remove('active'));
+
+      if (
+        position >= section.offsetTop &&
+        position <= (section.offsetTop + section.offsetHeight)
+      ) {
+        document.querySelectorAll('.navmenu a.active')
+          .forEach(link => link.classList.remove('active'));
+
         navmenulink.classList.add('active');
       } else {
         navmenulink.classList.remove('active');
       }
-    })
+    });
   }
+
   window.addEventListener('load', navmenuScrollspy);
   document.addEventListener('scroll', navmenuScrollspy);
 
