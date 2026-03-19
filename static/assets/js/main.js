@@ -3,24 +3,40 @@
   /**
    * About Video Auto Play on Scroll
    */
-  function initAboutVideo() {
-    const video = document.getElementById("aboutVideo");
-    const aboutSection = document.getElementById("about");
+function initAboutVideo() {
+  const video = document.getElementById("aboutVideo");
+  const aboutSection = document.getElementById("about");
 
-    if (!video || !aboutSection) return;
+  if (!video || !aboutSection) return;
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          video.src = video.src.replace("mute=1", "autoplay=1&mute=1");
-        } else {
-          video.src = video.src.replace("autoplay=1&mute=1", "mute=1");
-        }
-      });
-    }, { threshold: 0.5 });
+  let isPlaying = false;
 
-    observer.observe(aboutSection);
-  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+
+      if (entry.isIntersecting && !isPlaying) {
+        video.contentWindow.postMessage(JSON.stringify({
+          event: "command",
+          func: "playVideo"
+        }), "*");
+
+        isPlaying = true;
+      }
+
+      if (!entry.isIntersecting && isPlaying) {
+        video.contentWindow.postMessage(JSON.stringify({
+          event: "command",
+          func: "pauseVideo"
+        }), "*");
+
+        isPlaying = false;
+      }
+
+    });
+  }, { threshold: 0.6 });
+
+  observer.observe(aboutSection);
+}
 
   window.addEventListener('load', initAboutVideo);
 
